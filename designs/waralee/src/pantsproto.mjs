@@ -240,22 +240,28 @@ function waraleePantsProto({ options, measurements, Point, Path, points, paths, 
     .attr('class', 'fabric')
     .hide()
 
-  if (options.frontPocket) {
-    points.frontPocketTop = points.fWaistSideSeam
-      .shift(
-        270,
-        options.frontPocketVerticalOffset *
-          measurements.crotchDepth /*- measurements.waistToHips*/ +
-          waistBand * (separateWaistband ? 1 : 2)
-      )
-      .shift(180, options.frontPocketHorizontalOffset * measurements.seat)
+  const pocketWeltSize = Math.min(12, measurements.inseam / 64.67)
+  store.set('pocketWeltSize', pocketWeltSize)
 
-    points.frontPocketTop2 = points.frontPocketTop.shift(340, 12)
+  if (options.frontPocket && 'welt' == options.frontPocketStyle) {
+    const frontPocketVerticalPlacement =
+      options.frontPocketVerticalOffset * measurements.crotchDepth /*- measurements.waistToHips*/ +
+      waistBand * (separateWaistband ? 1 : 2)
+    const frontPocketHorizontalPlacement = options.frontPocketHorizontalOffset * measurements.seat
+
+    store.set('frontPocketVerticalPlacement', frontPocketVerticalPlacement)
+    store.set('frontPocketHorizontalPlacement', frontPocketHorizontalPlacement)
+
+    points.frontPocketTop = points.fWaistSideSeam
+      .shift(270, frontPocketVerticalPlacement)
+      .shift(180, frontPocketHorizontalPlacement)
+
+    points.frontPocketTop2 = points.frontPocketTop.shift(340, pocketWeltSize)
     points.frontPocketBottom = points.frontPocketTop.shift(
       250,
       options.frontPocketSize * measurements.crotchDepth /*- measurements.waistToHips*/
     )
-    points.frontPocketBottom2 = points.frontPocketBottom.shift(340, 12)
+    points.frontPocketBottom2 = points.frontPocketBottom.shift(340, pocketWeltSize)
 
     paths.frontPocket = new Path()
       .move(points.frontPocketTop)
@@ -288,11 +294,11 @@ function waraleePantsProto({ options, measurements, Point, Path, points, paths, 
       )
     points.backPocketRight2 = points.backPocketRight.shift(
       points.backPocketRight.angle(points.backPocketLeft) + 90,
-      12
+      pocketWeltSize
     )
     points.backPocketLeft2 = points.backPocketLeft.shift(
       points.backPocketLeft.angle(points.backPocketRight) - 90,
-      12
+      pocketWeltSize
     )
 
     paths.backPocket = new Path()

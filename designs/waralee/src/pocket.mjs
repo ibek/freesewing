@@ -21,12 +21,15 @@ function waraleePocket({
 
   const c = 0.55191502449351
 
-  let pocketDepth =
+  const pocketDepth =
     (measurements.crotchDepth - measurements.waistToHips) * options.frontPocketDepthFactor
-  let frontPocketSize =
+  const frontPocketSize =
     options.frontPocketSize * measurements.crotchDepth /*- measurements.waistToHips*/
 
   if ('welt' == options.frontPocketStyle) {
+    const pocketWeltSize = store.get('pocketWeltSize')
+    const frontPocketVerticalPlacement = store.get('frontPocketVerticalPlacement')
+
     points.topLeft = new Point(0, 0)
     points.bottomLeft = points.topLeft.shift(270, pocketDepth)
 
@@ -44,6 +47,8 @@ function waraleePocket({
       .line(points.topLeft)
       .close()
       .attr('class', 'fabric')
+
+    paths.pocketOpening = new Path()
   } else {
     points.topLeft = new Point(0, 0)
     points.topRight = points.topLeft.shift(0, frontPocketSize)
